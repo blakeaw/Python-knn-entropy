@@ -78,7 +78,7 @@ def shannon_entropy_pc(X, k=1, kth_dists=None):
     #
     r_k = kth_dists
     if kth_dists is None:
-        r_k = kth_nearest_neighbor_distances(X, k=k)
+        r_k = np.array(kth_nearest_neighbor_distances(X, k=k))
     n = len(X)
     d = 1
     if len(X.shape) == 2:
