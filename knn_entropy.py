@@ -40,7 +40,7 @@ def kth_nearest_neighbor_distances(X, k=1):
     dists_arr.sort()
     return [dists_arr[i][k] for i in xrange(nX)]
 
-def shannon_entropy_knn(X, k=1, kth_dists=None):
+def shannon_entropy(X, k=1, kth_dists=None):
     # KL entropy estimator from
     #  https://arxiv.org/pdf/1506.06501v1.pdf
     # Also see:
@@ -68,7 +68,7 @@ def shannon_entropy_knn(X, k=1, kth_dists=None):
     return H
 
 # Not entirely sure this one is correct.
-def shannon_entropy_knn_pc(X, k=1, kth_dists=None):
+def shannon_entropy_pc(X, k=1, kth_dists=None):
     # entropy estimator from
     # F. Perez-Cruz, (2008). Estimation of Information Theoretic Measures
     #     for Continuous Random Variables. Advances in Neural Information
@@ -97,10 +97,10 @@ def shannon_entropy_knn_pc(X, k=1, kth_dists=None):
 def mutual_information(var_tuple, k=2):
     nvar = len(var_tuple)
     joint = np.hstack(var_tuple)
-    Hx = [shannon_entropy_knn(var_tuple[i],k=k) for i in xrange(nvar)]
+    Hx = [shannon_entropy(var_tuple[i],k=k) for i in xrange(nvar)]
     Hx = np.array(Hx)
     Hxtot = Hx.sum()
-    Hjoint = shannon_entropy_knn(joint, k=k)
+    Hjoint = shannon_entropy(joint, k=k)
     MI = Hxtot - Hjoint
     if MI < 0.0: MI = 0.0
     return MI 
@@ -108,17 +108,17 @@ def mutual_information(var_tuple, k=2):
 # conditional mutual information
 def conditional_mutual_information(var_tuple, cond_tuple, k=2):
     nvar = len(var_tuple)
-    Hxz = [shannon_entropy_knn(np.hstack(var_tuple[i]+cond_tuple), k=k) for i in xrange(nvar)]
+    Hxz = [shannon_entropy(np.hstack(var_tuple[i]+cond_tuple), k=k) for i in xrange(nvar)]
     Hxz = np.array(Hxz)
     jtup = var_tuple + cond_tuple
     joint = np.hstack( jtup )
-    Hj = shannon_entropy_knn(joint, k=k)
+    Hj = shannon_entropy(joint, k=k)
     Hz = 0.0
     if len(cond_tuple) > 1:
         joint = np.hstack(cond_tuple)
-        Hz = shannon_entropy_knn(joint, k=k)
+        Hz = shannon_entropy(joint, k=k)
     else:
-        Hz = shannon_entropy_knn(cond_tuple[0], k=k)
+        Hz = shannon_entropy(cond_tuple[0], k=k)
     Hxzsum = Hxz.sum()
    # print "Hxzsum: ",Hxzsum, " Hj: ",Hj, " Hz: ",Hz
     MIc = Hxzsum - Hj - Hz
