@@ -96,18 +96,31 @@ def shannon_entropy_pc(X, k=1, kth_dists=None):
 #mutual information
 def mutual_information(var_tuple, k=2):
     nvar = len(var_tuple)
-    joint = np.hstack(var_tuple)
+    #make sure the input arrays are properly shaped for hstacking
+    var_tuple = tuple( var_tupe[i].reshape(len(var_tuple[i],-1)) for i in xrange(nvar) )
+    #compute the individual entropies of each variable  
     Hx = [shannon_entropy(var_tuple[i],k=k) for i in xrange(nvar)]
     Hx = np.array(Hx)
+    # and get the sum
     Hxtot = Hx.sum()
+    #now get the entropy of the joint distribution
+    joint = np.hstack(var_tuple)
     Hjoint = shannon_entropy(joint, k=k)
+    #get the mutual information
     MI = Hxtot - Hjoint
+    #set to zero if value is negative
     if MI < 0.0: MI = 0.0
+    #return
     return MI 
   	
 # conditional mutual information
 def conditional_mutual_information(var_tuple, cond_tuple, k=2):
     nvar = len(var_tuple)
+    ncon = len(cond_tuple)
+    #make sure the input arrays are properly shaped for hstacking
+    var_tuple = tuple( var_tupe[i].reshape(len(var_tuple[i],-1)) for i in xrange(nvar) )
+    cond_tuple = tuple( cond_tuple[i].reshape(len(cond_tuple[i],-1)) for i in xrange(ncon) )
+    # compute pair joint entropies
     Hxz = [shannon_entropy(np.hstack(var_tuple[i]+cond_tuple), k=k) for i in xrange(nvar)]
     Hxz = np.array(Hxz)
     jtup = var_tuple + cond_tuple
